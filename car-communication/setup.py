@@ -22,6 +22,9 @@ setup(
         'console_scripts': [
             'sender = car_communication.sender_node:main',
             'receiver = car_communication.receiver_node:main',
+
+            'odom_sender = car_communication.odom_sender:main',
+            'odom_sender = car_communication.odom_receiver:main',
         ],
     },
 )

@@ -1,31 +1,36 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from nav_msgs.msg import Odometry
 
-class ReceiverNode(Node):
+class OdomReceiver(Node):
 
     def __init__(self):
-        super().__init__('receiver_node')
+        super().__init__('odom_receiver')
         
-        # This subscribes to the sender's topic, which is in the 'car_A' namespace
-        # The leading '/' is important - it makes this an absolute topic path.
+        # subscribes to the shared topic (opponent_data)
         self.subscription = self.create_subscription(
-            String,
-            '/car_A/opponent_data',  # <-- This must match the sender's namespaced topic
+            Odometry,
+            'opponent_data',
             self.listener_callback,
             10)
-        self.get_logger().info('Receiver node is running and listening for opponent...')
+        self.get_logger().info('Odom Receiver is running and listening for opponent...')
 
     def listener_callback(self, msg):
-        # This function is called every time a message is received
-        self.get_logger().info(f'I HEARD: "{msg.data}"')
+        """Called everytime a message is received"""    
+
+        # get the position and speed
+        pos = msg.pose.pose.position
+        vel = msg.twist.twist.linear
+        
+        # log it
+        self.get_logger().info(f'HEARD Opponent: Pos=({pos.x:.2f}, {pos.y:.2f}) | Speed=({vel.x:.2f})')
 
 def main(args=None):
     rclpy.init(args=args)
-    receiver_node = ReceiverNode()
-    rclpy.spin(receiver_node)
+    odom_receiver = OdomReceiver()
+    rclpy.spin(odom_receiver)
     
-    receiver_node.destroy_node()
+    odom_receiver.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
