@@ -1,2 +1,3 @@
-# followgap
-F1Tenth Code for gt_follow_gap
+# F1Tenth Project Files
+Projects:
+* follow_gap
