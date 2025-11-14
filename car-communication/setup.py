@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'sender = car_communication.sender_node:main',
             'receiver = car_communication.receiver_node:main',
+            'follow_car = car_communication.follower_node:main',
         ],
     },
 )
