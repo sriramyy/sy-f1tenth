@@ -23,6 +23,7 @@ setup(
             'gt_follow_gap = gt_follow_gap.gt_follow_gap:main',
             'overtake = gt_follow_gap.overtake:main',
             'overtake2 = gt_follow_gap.overtake2:main',
+            'overtake3 = gt_follow_gap.overtake3:main',
         ],
     },
 )
