@@ -1,0 +1,3 @@
+C:/Users/srira/Documents/.Main Folder/projects/tea/sy-f1tenth/cmake-build-debug/CMakeFiles/sy_f1tenth.dir
+C:/Users/srira/Documents/.Main Folder/projects/tea/sy-f1tenth/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/srira/Documents/.Main Folder/projects/tea/sy-f1tenth/cmake-build-debug/CMakeFiles/rebuild_cache.dir
