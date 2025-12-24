@@ -2,15 +2,15 @@ import numpy as np
 
 class GeneticParameters:
     def __init__(self):
-        # Follow the Gap Params
-        self.BUBBLE_RADIUS = 100
+# Follow the Gap Params
+        self.BUBBLE_RADIUS = 130
         self.PREPROCESS_CONV_SIZE = 3
         self.BEST_POINT_CONV_SIZE = 120
         self.MAX_LIDAR_DIST = 7.0
-        self.MAX_STEER_ABS = np.deg2rad(40.0)
+        self.MAX_STEER_ABS = 0.698  # Approx 40 degrees
 
         # Speeds
-        self.STRAIGHT_SPEED = 4.0
+        self.STRAIGHT_SPEED = 4.426
         self.CORNER_SPEED = 2.0
         self.SPEED_MAX = 5.5
 
@@ -20,8 +20,9 @@ class GeneticParameters:
         self.TTC_HARD_BRAKE = 0.55
         self.TTC_SOFT_BRAKE = 0.9
         self.FWD_WEDGE_DEG = 8.0
-        self.STEER_SMOOTH_ALPHA = 0.5
-        self.STEER_RATE_LIMIT = np.deg2rad(8.0)
+        self.STEER_SMOOTH_ALPHA = 0.449
+        self.STEER_RATE_LIMIT = 0.14
+
 
     def update_from_dict(self, p_dict):
         """Used by the Genetic Algorithm to hot-swap values."""

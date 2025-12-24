@@ -13,9 +13,9 @@ class Lap:
 class Genome:
     def __init__(self, genome_id, params):
         self.id = genome_id
-        self.params = params
+        self.params: GeneticParameters = params
         self.fitness_score = 0.0
-        self.laps = []
+        self.laps : Lap | list[Lap] = []
 
 class GeneticML:
     def __init__(self, population_size=20, generations=50):
@@ -26,7 +26,7 @@ class GeneticML:
         self.elitism_percent = 0.2
 
         # overall best
-        self.overall_best_genome = None
+        self.overall_best_genome : Genome | None = None
 
         # current gen ppool
         self.population = [] # population of genomes
@@ -37,8 +37,13 @@ class GeneticML:
     def init_population(self):
         """Creates the first generation"""
         print(f"Creating Initial Population (Gen {self.current_generation})")
-        
-        for i in range(self.population_size):
+
+        # make genome 0 a copy of default params
+        default_genes = GeneticParameters()
+        self.population.append(Genome(0, default_genes))
+
+        # rest of genomes are mutated
+        for i in range(1, self.population_size):
             p = GeneticParameters() # defaul params
             p = self.mutate(p) # mutate to create diversiy in first batch
             self.population.append(Genome(i,p))
@@ -64,7 +69,7 @@ class GeneticML:
         # check and update overall best
         if self.overall_best_genome is None or score > self.overall_best_genome.fitness_score:
             self.overall_best_genome = copy.deepcopy(genome)
-            print(f"*** New Record: {time:.2f}s | Score: {score:.2f} ***")
+            print(f"\n 🟪🟪🟪 New Record: {time:.2f}s | Score: {score:.2f} ***")
 
         self.current_genome_index += 1
 

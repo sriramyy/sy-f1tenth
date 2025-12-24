@@ -18,7 +18,7 @@ class GeneticFollowGap(Node):
 
         # ros2 setup
         self.scan_sub = self.create_subscription(LaserScan, "/scan", self.lidar_callback, 10)
-        self.odom_sub = self.create_subscription(Odometry, "/odom", self.odom_callback, 10)
+        self.odom_sub = self.create_subscription(Odometry, "/ego_racecar/odom", self.odom_callback, 10)
         self.drive_pub = self.create_publisher(AckermannDriveStamped, "/drive", 10)
 
         # lets supervisor send new genes to car
@@ -112,7 +112,7 @@ class GeneticFollowGap(Node):
 
     def index_to_steer(self, idx, length):
         angle = (idx - (length / 2.0)) * self.radians_per_elem
-        return float(np.clip(angle / 2.0, -self.params.MAX_STEER_ABS, self.params.MAX_STEER_ABS))
+        return float(np.clip(angle / 2, -self.params.MAX_STEER_ABS, self.params.MAX_STEER_ABS))
 
     def smooth_and_limit_steer(self, steer):
         s = (1.0 - self.params.STEER_SMOOTH_ALPHA) * steer + self.params.STEER_SMOOTH_ALPHA * self.prev_steer
@@ -154,13 +154,41 @@ class GeneticFollowGap(Node):
             # expect a JSON string ex) {"BUBBLE_RADIUS": 120, "MAX_SPEED": 6.0}
             data = json.loads(msg.data)
             self.params.update_from_dict(data)
-            self.get_logger().info("+++ New Genes Injected Successfully!")
+            # wipe prev memory
+            self.prev_steer = 0.0
+            self.ego_speed = 0.0
+            
+            # debug print
+            # This proves the genes are actually changing inside the car
+            print(f"\n🧬 DRIVER UPDATE: Bubble={self.params.BUBBLE_RADIUS}, Speed={self.params.SPEED_MAX}, SteerBias={self.params.CENTER_BIAS_ALPHA}")
         except Exception as e:
             self.get_logger().error(f"Failed to update params: {e}")
 
 def main():
     rclpy.init()
     node = GeneticFollowGap()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # --- SHUTDOWN ---
+        print("\n SHUTTING DOWN: Stopping the car...")
+        
+        # create a zero-speed message
+        stop_msg = AckermannDriveStamped()
+        stop_msg.header.stamp = node.get_clock().now().to_msg()
+        stop_msg.drive.speed = 0.0
+        stop_msg.drive.steering_angle = 0.0
+        
+        # Publish multiple times to ensure the Simulator hears it
+        for _ in range(10):
+            node.drive_pub.publish(stop_msg)
+            
+        # Clean up
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
