@@ -12,8 +12,9 @@
   * Receiver Node
   * Follow Car
 
-* `ftg-genetic-ml`
- See readme in the respective file or go [here](https://github.com/sriramyy/f1tenth_genetic_driver)
+* `ftg-genetic-ml` \
+  **NOTE**: For a more up to date version of this project please see [this repository](https://github.com/sriramyy/f1tenth_genetic_driver)
+\
 \
 **To run Projects**:
 \
