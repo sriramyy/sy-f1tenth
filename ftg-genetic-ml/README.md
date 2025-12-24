@@ -1,7 +1,8 @@
 # Follow the Gap + Genetic ML
 
-**NOTE**: **For a more up to date version of this project, please see [this repository](https://github.com/sriramyy/f1tenth_genetic_driver)
-**
+**NOTE**: **For a more up to date version of this project, please see [this repository](https://github.com/sriramyy/f1tenth_genetic_driver)**
+
+
 An autonomous racing algorithm that combines the **Follow the Gap** (FTG) with **Genetic Algorithm optimization** to evolve optimal driving parameters for F1TENTH race cars in simulation.
 
 *Note: This Algorithm requires using the `f1tenth_gym_ros` simulator*
