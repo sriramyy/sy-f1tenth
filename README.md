@@ -14,7 +14,11 @@
 
 * `ftg-genetic-ml` \
   **NOTE**: For a more up to date version of this project please see [this repository](https://github.com/sriramyy/f1tenth_genetic_driver)
-\
+
+* `adaptive_ftg`
+  * Has its own [repository](https://github.com/sriramyy/f1tenth_adaptive_ftg)
+ 
+
 \
 **To run Projects**:
 \
