@@ -5,6 +5,7 @@
   * Follow the Gap (standard)
   * Overtaking
     * `overtake`, `overtake2`, `overtake3`
+      * Note: `overtake` supports on-demand updating for parameters by typing x while the algorithm is running. Saves time as opposed to using `colcon build` everytime you want to change parameters.  
 
 
 * `car_communication`
