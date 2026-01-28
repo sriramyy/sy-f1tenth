@@ -2,6 +2,7 @@
 import math
 from enum import Enum, auto
 from typing import Optional, List
+import threading
 
 import rclpy
 from rclpy.node import Node
@@ -94,12 +95,62 @@ class OvertakeFollowGap(Node):
         self.radians_per_elem: Optional[float] = None
         self.proc_latest: Optional[np.ndarray] = None  # pre-bubble, cropped
         self.prev_steer: float = 0.0
+        
+        # Keyboard input thread
+        self.keyboard_thread = threading.Thread(target=self.keyboard_listener, daemon=True)
+        self.keyboard_thread.start()
 
         self.get_logger().info("OvertakeFollowGap (ROS2) started.")
 
     # Helpers
     def now_sec(self) -> float:
         return self.get_clock().now().nanoseconds * 1e-9
+
+    def keyboard_listener(self):
+        """Run in background thread to listen for 'x' key press."""
+        self.get_logger().info("Keyboard listener started. Press 'x' to stop and update parameters.")
+        while rclpy.ok():
+            try:
+                key = input()
+                if key.lower() == 'x':
+                    self.get_logger().info("Stop signal received. Car stopping.")
+                    self.publish_drive(0.0, 0.0)
+                    self.prompt_parameter_update()
+            except Exception as e:
+                self.get_logger().warning(f"Keyboard input error: {e}")
+
+    def prompt_parameter_update(self):
+        """Prompt user for new parameters and update them."""
+        self.get_logger().info("\n=== Parameter Update ===")
+        self.get_logger().info("Enter parameters as comma-separated values:")
+        self.get_logger().info("Format: bubble_radius, max_lidar_dist, straight_speed, corner_speed, speed_max, steer_smooth_alpha, preprocess_conv_size")
+        self.get_logger().info(f"Current values: {self.BUBBLE_RADIUS}, {self.MAX_LIDAR_DIST}, {self.STRAIGHT_SPEED}, {self.CORNER_SPEED}, {self.SPEED_MAX}, {self.STEER_SMOOTH_ALPHA}, {self.PREPROCESS_CONV_SIZE}")
+        self.get_logger().info("(Press Ctrl+C to skip)")
+        
+        try:
+            user_input = input("New parameters: ").strip()
+            if user_input:
+                params = [p.strip() for p in user_input.split(',')]
+                if len(params) >= 7:
+                    try:
+                        self.BUBBLE_RADIUS = int(params[0])
+                        self.MAX_LIDAR_DIST = float(params[1])
+                        self.STRAIGHT_SPEED = float(params[2])
+                        self.CORNER_SPEED = float(params[3])    
+                        self.SPEED_MAX = float(params[4])
+                        self.STEER_SMOOTH_ALPHA = float(params[5])
+                        self.PREPROCESS_CONV_SIZE = int(params[6])
+                        
+                        self.get_logger().info(f"Parameters updated successfully!")
+                        self.get_logger().info(f"New values: BUBBLE_RADIUS={self.BUBBLE_RADIUS}, MAX_LIDAR_DIST={self.MAX_LIDAR_DIST}, STRAIGHT_SPEED={self.STRAIGHT_SPEED}, CORNER_SPEED={self.CORNER_SPEED}, SPEED_MAX={self.SPEED_MAX}, STEER_SMOOTH_ALPHA={self.STEER_SMOOTH_ALPHA}, PREPROCESS_CONV_SIZE={self.PREPROCESS_CONV_SIZE}")
+                    except ValueError as e:
+                        self.get_logger().error(f"Invalid parameter values: {e}")
+                else:
+                    self.get_logger().error(f"Expected 7 parameters, got {len(params)}")
+        except (KeyboardInterrupt, EOFError):
+            self.get_logger().info("Parameter update skipped.")
+        except Exception as e:
+            self.get_logger().error(f"Error during parameter update: {e}")
 
     #  Callbacks
     def odom_callback(self, msg: Odometry):

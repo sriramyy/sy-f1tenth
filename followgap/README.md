@@ -10,6 +10,6 @@ Allows a car to follow the gap in any general circuit. Does not require any race
 `ros2 run gt_follow_gap overtake` - Overtaking mode for follow the gap, much faster and assumes opponent is at constant speed.
 \
 **Overtaking Packages:**
-* `overtake1` - original overtaking package
+* `overtake` - Now allows you to change params on demand by pressing x when the car is running.
 * `overtake2` - updated overtaking package
 * `overtake3` - most recently used overtaking package
